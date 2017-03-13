@@ -46,7 +46,7 @@ count = 0
 with open("access.log", "r") as logfile:
     data = logfile.readlines()
     for value in data:
-        ipAddress = value.split(' - - ', 1)[0]
+        ipAddress = value.split(' - - ')[0]
         if ipAddress in resultList:
             resultList[ipAddress] += 1
         else:
