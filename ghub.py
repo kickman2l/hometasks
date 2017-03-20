@@ -11,7 +11,6 @@ from datetime import date
 
 # -------------------------------------------------- arguments block ------------------------------------------------- #
 
-authen = ('kickman2l', '1780ad6879df1b3988127d94f7483f071d86f1be')
 
 parser = argparse.ArgumentParser(usage='%(prog)s <user> <repository name> -num <req number> -o <opt1 opt2 opt3>',
                                  formatter_class=argparse.RawTextHelpFormatter)
@@ -43,15 +42,24 @@ args = parser.parse_args()
 # ------------------------------------- Functions for processing options --------------------------------------------- #
 
 
+week = ['Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday']
+
+# ------------------------------------ Defiitions -------------------------------------------------------------------- #
+
+
 def summary_rep_inf(res):
-    print("req.number  state  user          created                           title")
     for i in res:
         print(str(i["number"]) + "          " + str(i["state"]) + "   " + str(i["user"]["login"])
               + "        " + str(i["created_at"]) + "        " + str(i["title"]))
 
 
 def summary_single_inf(res):
-    print("req.number  state  user          created                           title")
     print(str(res["number"]) + "          " + str(res["state"]) + "   " + str(res["user"]["login"])
           + "        " + str(res["created_at"]) + "        " + str(res["title"]))
 
@@ -88,7 +96,6 @@ def oad(res, string_date):
     if is_find_val == 0:
         print("No such data")
     else:
-        print("req.number  state  user          created                           title")
         for i in data_array:
             print(i)
 
@@ -113,14 +120,12 @@ def obd(res, string_date):
     if is_find_val == 0:
         print("No such data")
     else:
-        print("req.number  state  user          created                           title")
         for i in data_array:
             print(i)
 
 
 def ncc(res):
-    print("Pull request info:")
-    print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+    print("Pull request info: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
           + ". Number of comments: " + str(res["comments"]))
 
 
@@ -133,53 +138,34 @@ def ndo(res):
     d0 = date(date_arr[0], date_arr[1], date_arr[2])
     d1 = date(now.year, now.month, now.day)
     delta = d0 - d1
-    print("Opened days info:")
-    print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+    print("Opened days info: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
           + ". Days opened: " + str(abs(delta.days)))
 
 
 def dwo(res):
-    week = ['Sunday',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday']
     date_arr = []
     for val in res["created_at"].split("T")[0].split('-'):
         date_arr.append(int(val))
-    print("Day of week opened:")
-    print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+    print("Day of week opened: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
           + ". Day opened: " + str(week[date(date_arr[0], date_arr[1], date_arr[2]).weekday()]))
 
 
 def dwc(res):
     if res["closed_at"]:
-        week = ['Sunday',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday']
         date_arr = []
         for val in res["closed_at"].split("T")[0].split('-'):
             date_arr.append(int(val))
-        print("Day of week opened:")
-        print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+        print("Day of week closed: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
               + ". Day closed: " + str(week[date(date_arr[0], date_arr[1], date_arr[2]).weekday()]))
     else:
-        print("Day of week closed:")
-        print("Request still not closed.")
+        print("Day of week closed: Request still not closed.")
 
 
 def wo(res):
     date_arr = []
     for val in res["created_at"].split("T")[0].split('-'):
         date_arr.append(int(val))
-    print("Week in year:")
-    print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+    print("Week opened: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
           + ". Week opened: " + str(datetime.date(date_arr[0], date_arr[1], date_arr[2]).isocalendar()[1]))
 
 
@@ -188,36 +174,31 @@ def wc(res):
         date_arr = []
         for val in res["created_at"].split("T")[0].split('-'):
             date_arr.append(int(val))
-        print("Week in year:")
-        print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+        print("Week closed: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
               + ". Week opened: " + str(datetime.date(date_arr[0], date_arr[1], date_arr[2]).isocalendar()[1]))
     else:
-        print("Week in year:")
-        print("Request still not closed.")
+        print("Week in year: Request still not closed.")
 
 
 def uo(res):
-    print("User opened:")
-    print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+    print("User opened: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
           + ". Opened by user: " + str(res["user"]["login"]))
 
 
 def uc(res):
     if res["state"] == "closed":
         response = requests.get('https://api.github.com/repos/' + args.username[0] + '/' + args.repository[0] +
-                                '/issues/' + args.number + '/events', auth=authen)
+                                '/issues/' + args.number + '/events')
         if (response.ok):
             js = json.loads(response.text)
-            print("User closed request:")
-            print("PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
+            print("User closed request: PR num: " + str(res["number"]) + "   " + str(res["state"]) + "   " + str(res["user"]["login"])
                   + ". User closed request: " + str(js[0]["actor"]["login"]))
     else:
-        print("User closed request:")
-        print("Request still not closed.")
+        print("User closed request: Request still not closed.")
 
 def al(res):
     response = requests.get('https://api.github.com/repos/' + args.username[0] + '/' + args.repository[0] +
-                            '/issues/' + args.number + '/events', auth=authen)
+                            '/issues/' + args.number + '/events')
     if (response.ok):
         js = json.loads(response.text)
         for i in js:
@@ -226,33 +207,30 @@ def al(res):
 
 
 def nla(res):
-    print("Number lines added:")
-    print(res["additions"])
+    print("Number lines added:" + str(res["additions"]))
 
 
 def nld(res):
-    print("Number lines deleted:")
-    print(res["deletions"])
+    print("Number lines deleted:" + str(res["deletions"]))
 
 
 def hdc(res):
     if res["closed_at"]:
-        print("Hour of day closed:")
         hms = res["created_at"].split("T")[1].split('-')
-        print(hms[0].split(":")[0])
+        print("Hour of day closed:" + hms[0].split(":")[0])
 
 
 def hdo(res):
     if res["created_at"]:
-        print("Hour of day opened:")
         hms = res["created_at"].split("T")[1].split('-')
-        print(hms[0].split(":")[0])
+        print("Hour of day opened:" + hms[0].split(":")[0])
 
 
 def ghub_request(type=""):
     response = requests.get('https://api.github.com/repos/' + args.username[0] + '/' + args.repository[0] +
-                            '/pulls?state=' + type, auth=authen)
+                            '/pulls?state=' + type)
     if (response.ok):
+        print("req.number  state  user          created                           title")
         return json.loads(response.text)
     else:
         print("ERR: Something goes wrong. Please check username, repository name, options.")
@@ -261,7 +239,7 @@ def ghub_request(type=""):
 
 def ghub_num_request():
     response = requests.get('https://api.github.com/repos/' + args.username[0] + '/' + args.repository[0] +
-                            '/pulls/' + args.number, auth=authen)
+                            '/pulls/' + args.number)
     if (response.ok):
         return json.loads(response.text)
     else:
